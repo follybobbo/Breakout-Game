@@ -16,7 +16,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        """TODO: OTHER CONDITION FOR GAME OVER HERE"""
+        """TODO: OTHER CONDITION FOR GAME OVER HERE""
 
 
 
