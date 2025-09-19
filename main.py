@@ -46,7 +46,7 @@ while running:
     """MOVE PADDLE"""
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RIGHT]:
-        #Limits the movement of paddle, so it wont move beyond screen.
+        #Limits the movement of paddle, so it wont move beyond screen..
         if rect.x <= 1175:
             rect.x += 300 * dt
     if keys[pygame.K_LEFT]:
