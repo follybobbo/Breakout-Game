@@ -1,7 +1,7 @@
 import pygame
 
 
-class Ball():
+class Ball:
 
     def __init__(self, screen, color, ball_pos, radius, dt):
         self.surface = screen
@@ -18,3 +18,6 @@ class Ball():
     def move_ball(self):
         self.ball_pos.y -= 100 * self.dt
         # self.ball_pos.x = 100 * self.dt
+
+    def bounce(self):
+        self.ball_pos.y *= -1

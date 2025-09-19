@@ -5,16 +5,26 @@ from paddle import Paddle
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
+
 running = True
+#intitial frame per second definition
 dt = clock.tick(60)/1000
 
+#Defines initial ball position
 ball_pos = pygame.Vector2(screen.get_width()/2, screen.get_height())
+
+#Creates rectangle.
 rect = pygame.Rect((580, 700), (100, 100))
 
-
+#creates the ball instance from the Ball class
 ball = Ball(screen, "red", ball_pos, 10, dt)
-paddle = Paddle(screen, "blue", rect, 40)
 
+#Creates the paddle instance from the Paddle class
+paddle = Paddle(screen, "blue", rect, 40)
+# print(f"height = {screen.get_height()}")
+# print(f"width = {screen.get_width()}")
+
+"""TODO2: Create Destructible bricks."""
 while running:
     # poll for events-+
     # pygame.QUIT event means the user clicked X to close your window
@@ -29,13 +39,31 @@ while running:
     screen.fill("purple")
     """TODO: Game Logic Here"""
     # RENDER YOUR GAME HERE
-    ball.create_ball()
-    ball.move_ball()
+    ball.create_ball()           #Creates Ball by calling create ball method
+    ball.move_ball()             #moves ball
+    paddle.create_paddle()       #Creates Paddle.
 
-    paddle.create_paddle()
+    """MOVE PADDLE"""
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_RIGHT]:
+        #Limits the movement of paddle, so it wont move beyond screen.
+        if rect.x <= 1175:
+            rect.x += 300 * dt
+    if keys[pygame.K_LEFT]:
+        if rect.x >= 4:
+            rect.x -= 300 * dt
+
+    """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
+
+
+    """TODO3: DEFINE LOGIC AND CONDITIONS FOR DESTRUCTION OF BRICK UPON IMPACT WITH BALL AND THEN BOUNCE"""
+
+
+
+
     # flip() the display to put your work on screen
     pygame.display.flip()
-    """Define dt here: seconds/frame."""
+
     dt = clock.tick(60)/1000  # limits FPS to 60
 
 pygame.quit()
