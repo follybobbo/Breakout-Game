@@ -1,6 +1,11 @@
 import pygame
 from ball import Ball
 from paddle import Paddle
+from bricks import Bricks
+from random import Random
+
+rand = Random()
+
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -23,16 +28,21 @@ speed = [2, 2]
 #creates the ball instance from the Ball class
 ball = Ball(screen, "red", ball_pos, 10, dt, speed)
 
+#brick rect
 
 
 
 
+destructible_brick = Bricks(screen.get_width())
+
+destructible_brick.create_rect()
+# print(len(destructible_brick.brick_list))
+# for rect in destructible_brick.brick_list:
+#     print(rect)
 
 
+color_list = ["red", "blue", "green"]
 
-
-
-print(screen.get_height())
 
 
 
@@ -41,6 +51,8 @@ while running:
     # poll for events-+
     # pygame.QUIT event means the user clicked X to close your window
     # print(ball.ball_pos.y)
+
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -51,11 +63,13 @@ while running:
 
     # fill the screen with a color to wipe away anything from last frame
 
-    screen.fill("purple")
+    screen.fill("black")
     # RENDER YOUR GAME HERE
 
 
-    ball_rect = ball.draw_ball()
+
+    ball.draw_ball()
+
     ball.move_ball()
 
 
@@ -64,7 +78,7 @@ while running:
     """MOVE PADDLE WITH USER INPUT"""
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RIGHT]:
-        #Limits the movement of paddle, so it won't move beyond screen..
+        #Limits the movement of paddle, so it won't move beyond screen
         if rect.x <= 1175:
             rect.x += 300 * dt
     if keys[pygame.K_LEFT]:
@@ -73,8 +87,6 @@ while running:
 
 
 
-
-    #
     """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
     if ball.ball_pos.y <= 4:
         ball.bounce_y()
@@ -84,6 +96,10 @@ while running:
 
     if (rect.y - ball.ball_pos.y) < 10 and (rect.x - ball.ball_pos.x) < abs(10):
         ball.bounce_y()
+
+    for brick in destructible_brick.brick_list:
+        # color = rand.choice(color_list)
+        pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
 
 
 
