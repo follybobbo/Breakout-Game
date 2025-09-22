@@ -68,12 +68,13 @@ while running:
 
 
 
-    ball.draw_ball()
+    ball_rect = ball.draw_ball()
 
     ball.move_ball()
 
 
     paddle.create_paddle()
+
 
     """MOVE PADDLE WITH USER INPUT"""
     keys = pygame.key.get_pressed()
@@ -97,9 +98,17 @@ while running:
     if (rect.y - ball.ball_pos.y) < 10 and (rect.x - ball.ball_pos.x) < abs(10):
         ball.bounce_y()
 
+    #draw bricks on wall
     for brick in destructible_brick.brick_list:
         # color = rand.choice(color_list)
         pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
+
+    #check for collision with brick and brick dissapear.
+    for brick in destructible_brick.brick_list:
+        if brick.colliderect(ball_rect):
+            brick_index = destructible_brick.brick_list.index(brick)
+            destructible_brick.brick_list.pop(brick_index)
+            ball.bounce_y()
 
 
 
