@@ -11,23 +11,37 @@ running = True
 dt = clock.tick(60)/1000
 
 #Defines initial ball position
-ball_pos = pygame.Vector2(screen.get_width()/2, screen.get_height())
+ball_pos = pygame.Vector2(screen.get_width()/2, 620)
 
 #Creates rectangle.
 rect = pygame.Rect((580, 700), (100, 100))
 
-#creates the ball instance from the Ball class
-ball = Ball(screen, "red", ball_pos, 10, dt)
-
 #Creates the paddle instance from the Paddle class
 paddle = Paddle(screen, "blue", rect, 40)
-# print(f"height = {screen.get_height()}")
-# print(f"width = {screen.get_width()}")
+
+speed = [2, 2]
+#creates the ball instance from the Ball class
+ball = Ball(screen, "red", ball_pos, 10, dt, speed)
+
+
+
+
+
+
+
+
+
+
+print(screen.get_height())
+
+
 
 """TODO2: Create Destructible bricks."""
 while running:
     # poll for events-+
     # pygame.QUIT event means the user clicked X to close your window
+    # print(ball.ball_pos.y)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -36,24 +50,49 @@ while running:
 
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
-    """TODO: Game Logic Here"""
-    # RENDER YOUR GAME HERE
-    ball.create_ball()           #Creates Ball by calling create ball method
-    ball.move_ball()             #moves ball
-    paddle.create_paddle()       #Creates Paddle.
 
-    """MOVE PADDLE"""
+    screen.fill("purple")
+    # RENDER YOUR GAME HERE
+
+
+    ball_rect = ball.draw_ball()
+    ball.move_ball()
+
+
+    paddle.create_paddle()
+
+    """MOVE PADDLE WITH USER INPUT"""
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RIGHT]:
-        #Limits the movement of paddle, so it wont move beyond screen..
+        #Limits the movement of paddle, so it won't move beyond screen..
         if rect.x <= 1175:
             rect.x += 300 * dt
     if keys[pygame.K_LEFT]:
         if rect.x >= 4:
             rect.x -= 300 * dt
 
+
+
+
+    #
     """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
+    if ball.ball_pos.y <= 4:
+        ball.bounce_y()
+    if ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
+        ball.bounce_x()
+
+
+    if (rect.y - ball.ball_pos.y) < 10 and (rect.x - ball.ball_pos.x) < abs(10):
+        ball.bounce_y()
+
+
+
+
+
+
+
+
+
 
 
     """TODO3: DEFINE LOGIC AND CONDITIONS FOR DESTRUCTION OF BRICK UPON IMPACT WITH BALL AND THEN BOUNCE"""
