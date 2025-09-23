@@ -3,6 +3,7 @@ from ball import Ball
 from paddle import Paddle
 from bricks import Bricks
 from random import Random
+from score import Score
 
 rand = Random()
 
@@ -28,7 +29,7 @@ speed = [2, 2]
 #creates the ball instance from the Ball class
 ball = Ball(screen, "red", ball_pos, 10, dt, speed)
 
-#brick rect
+
 
 
 
@@ -43,7 +44,7 @@ destructible_brick.create_rect()
 
 color_list = ["red", "blue", "green"]
 
-
+score = Score()
 
 
 """TODO2: Create Destructible bricks."""
@@ -114,9 +115,9 @@ while running:
                 s_color = color[0]
             elif 15 < index <= 31:
                 s_color = color[1]
-            elif 30 < index <= 47:
+            elif 31 < index <= 47:
                 s_color = color[2]
-            elif index > 45:
+            elif index > 47:
                 s_color = color[3]
 
             pygame.draw.rect(screen, s_color, brick, destructible_brick.brick_width)
@@ -135,10 +136,10 @@ while running:
             pass
         else:
             if brick.colliderect(ball_rect):
+                score.update_score(index)
                 destructible_brick.brick_list[index] = ""
-                # brick_index = destructible_brick.brick_list.index(brick)
-                # destructible_brick.brick_list.pop(brick_index)
                 ball.bounce_y()
+                print(score.total_score)
 
 
 
