@@ -91,12 +91,14 @@ while running:
     """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
     if ball.ball_pos.y <= 4:
         ball.bounce_y()
-    if ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
+    elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
         ball.bounce_x()
+
 
 
     if (rect.y - ball.ball_pos.y) < 10 and (rect.x - ball.ball_pos.x) < abs(10):
         ball.bounce_y()
+
 
     #draw bricks on wall
     for brick in destructible_brick.brick_list:
@@ -109,6 +111,7 @@ while running:
             brick_index = destructible_brick.brick_list.index(brick)
             destructible_brick.brick_list.pop(brick_index)
             ball.bounce_y()
+            # ball.bounce_x()
 
 
 

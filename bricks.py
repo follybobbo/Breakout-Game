@@ -14,9 +14,15 @@ class Bricks:
 
 
     def create_rect(self):
-        x = 0
-        y = 0
-        for times in range(int(self.no_of_brick)):
+        x = 0  # x starting point
+        y = 120  # y starting point
+
+        row = 4
+        brick_row = row * self.no_of_brick
+        for times in range(int(brick_row)):
+            if x >= 1280:
+                x = 0
+                y += 30 + 1
             rect = pygame.Rect((x, y), (self.brick_width, 30))
             self.brick_list.append(rect)
             x += self.brick_width + 1
