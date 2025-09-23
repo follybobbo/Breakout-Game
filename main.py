@@ -101,22 +101,49 @@ while running:
 
 
     #draw bricks on wall
-    for brick in destructible_brick.brick_list:
-        # color = rand.choice(color_list)
-        pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
+    # for brick in destructible_brick.brick_list:
+    #     # color = rand.choice(color_list)
+    #     pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
+
+    for index, brick in enumerate(destructible_brick.brick_list):
+        color = ["blue", "red", "green", "#A2AF9B"]
+        if brick == "":
+            pass
+        else:
+            if index <= 15:
+                s_color = color[0]
+            elif 15 < index <= 31:
+                s_color = color[1]
+            elif 30 < index <= 47:
+                s_color = color[2]
+            elif index > 45:
+                s_color = color[3]
+
+            pygame.draw.rect(screen, s_color, brick, destructible_brick.brick_width)
+
 
     #check for collision with brick and brick dissapear.
-    for brick in destructible_brick.brick_list:
-        if brick.colliderect(ball_rect):
-            brick_index = destructible_brick.brick_list.index(brick)
-            destructible_brick.brick_list.pop(brick_index)
-            ball.bounce_y()
+    # for brick in destructible_brick.brick_list:
+    #     if brick.colliderect(ball_rect):
+    #         brick_index = destructible_brick.brick_list.index(brick)
+    #         destructible_brick.brick_list.pop(brick_index)
+    #         ball.bounce_y()
             # ball.bounce_x()
 
+    for index, brick in enumerate(destructible_brick.brick_list):
+        if brick == "":
+            pass
+        else:
+            if brick.colliderect(ball_rect):
+                destructible_brick.brick_list[index] = ""
+                # brick_index = destructible_brick.brick_list.index(brick)
+                # destructible_brick.brick_list.pop(brick_index)
+                ball.bounce_y()
 
 
 
 
+    """"""
 
 
 
