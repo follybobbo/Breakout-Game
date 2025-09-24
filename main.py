@@ -20,7 +20,7 @@ dt = clock.tick(60)/1000
 ball_pos = pygame.Vector2(screen.get_width()/2, 620)
 
 #Creates rectangle.
-rect = pygame.Rect((580, 700), (100, 100))
+rect = pygame.Rect((580, 700), (200, 100))
 
 #Creates the paddle instance from the Paddle class
 paddle = Paddle(screen, "blue", rect, 40)
@@ -58,13 +58,15 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif ball.ball_pos.y > screen.get_height():
+            running = False
         """TODO: OTHER CONDITION FOR GAME OVER HERE"""
 
 
 
     # fill the screen with a color to wipe away anything from last frame
 
-    screen.fill("black")
+    screen.fill("purple")
     # RENDER YOUR GAME HERE
 
 
@@ -87,21 +89,46 @@ while running:
         if rect.x >= 4:
             rect.x -= 300 * dt
 
+    #SPPED UP BALL IF CONDITIONS ARE MET
+    speed_up = destructible_brick.time_to_speedup()
+    if speed_up:
+        ball.speed_up()
+
 
 
     """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
     if ball.ball_pos.y <= 4:
-        ball.bounce_y()
+        pass
+        # ball.bounce_y()
     elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
         ball.bounce_x()
 
 
 
-    if (rect.y - ball.ball_pos.y) < 10 and (rect.x - ball.ball_pos.x) < abs(10):
+    # if (ball.ball_pos.x - rect.x) == 90 and (rect.y - ball.ball_pos.y) <= 6:
+    #     ball.bounce_y()
+
+
+
+    if (rect.y - ball.ball_pos.y) < 10 and abs(rect.x - ball.ball_pos.x)  <=90:
         ball.bounce_y()
+        print(rect)
+        print(ball.ball_pos)
+        print(f"Y: {rect.y} - {ball.ball_pos.y} = {rect.y - ball.ball_pos.y}")
+        print(f"X: {rect.x} - {ball.ball_pos.x} = {rect.x - ball.ball_pos.x}")
+    #
+    #
+    # if rect.colliderect(ball_rect):
+    #     # print(f"rect: (x, y) ({rect.x}, {rect.y})")
+    #     # print(f"ball: (x, y) ({ball_rect.x}, {ball_rect.y})")
+    #
+    #     print(f"(x) ({(ball.ball_pos.x - rect.x)})")
+    #     print(f"(y) ({rect.y - ball.ball_pos.y})")
 
 
-    #draw bricks on wall
+
+    #DRAW BRICKS ON WALL AND MAKE EACH LINE DIFFERENT COLOR
+
     # for brick in destructible_brick.brick_list:
     #     # color = rand.choice(color_list)
     #     pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
@@ -123,7 +150,8 @@ while running:
             pygame.draw.rect(screen, s_color, brick, destructible_brick.brick_width)
 
 
-    #check for collision with brick and brick dissapear.
+    #CHECK FOR BALL COLLISION WITH BRICK, AND BRICK DISSAPPEAR.
+
     # for brick in destructible_brick.brick_list:
     #     if brick.colliderect(ball_rect):
     #         brick_index = destructible_brick.brick_list.index(brick)
@@ -139,7 +167,7 @@ while running:
                 score.update_score(index)
                 destructible_brick.brick_list[index] = ""
                 ball.bounce_y()
-                print(score.total_score)
+                # print(score.total_score)
 
 
 

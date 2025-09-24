@@ -37,6 +37,9 @@ class Ball:
     def bounce_x(self):
        self.speed[0] *= -1
 
+    def speed_up(self):
+        self.speed[0] *= 1.2
+        self.speed[1] *= 1.2
 
     def paddle_bounce(self):
         self.speed[1] *= -1

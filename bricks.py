@@ -27,6 +27,24 @@ class Bricks:
             self.brick_list.append(rect)
             x += self.brick_width + 1
 
+    def time_to_speedup(self):
+        destroyed_count = 0
+        for rect in self.brick_list:
+            if rect == "":
+                destroyed_count += 1
+
+        percentage_destroyed = (destroyed_count/64) * 100
+        # print(destroyed_count)
+        if destroyed_count == 15:
+            return True
+        elif destroyed_count == 30:
+            return True
+        elif destroyed_count == 45:
+            return True
+        else:
+            return False
+
+
 
     # def create_bricks(self, surface, colour, ):
     #     # x = 0
