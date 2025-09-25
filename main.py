@@ -5,6 +5,12 @@ from bricks import Bricks
 from random import Random
 from score import Score
 
+
+"""TODO1 : Sound Effect"""
+"""TODO2: Add pause and pla feature"""
+"""TODO3: REFLECT SCORE COUNT SOMEWHERE ON SCREEN"""
+"""TODO4: add nice colors"""
+
 rand = Random()
 game_state = {}
 
@@ -36,11 +42,12 @@ ball = Ball(screen, "red", ball_pos, 10, dt, speed)
 
 
 destructible_brick = Bricks(screen.get_width())
-
 destructible_brick.create_rect()
-# print(len(destructible_brick.brick_list))
-# for rect in destructible_brick.brick_list:
-#     print(rect)
+
+
+#sound
+pygame.mixer.init()
+bounce_sound = pygame.mixer.Sound("sounds/bounce.wav")
 
 
 color_list = ["red", "blue", "green"]
@@ -125,6 +132,7 @@ while running:
 
     if rect.colliderect(ball_rect):
         ball.bounce_y()
+        bounce_sound.play()
         #makes ball position outside the paddle so collision will only be detected once.
         ball.ball_pos.y = rect.top - 10
 
