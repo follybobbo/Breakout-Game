@@ -59,17 +59,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif ball.ball_pos.y >= screen.get_height():
-            print("out")
-            # game_state["ball"] = pygame.Vector2(ball_pos.x, ball_pos.y)
-            game_state["brick"] = destructible_brick.brick_list
-            # ball = Ball(screen, "red", ball_pos, 10, dt, speed)
-            # ball_rect = ball.draw_ball()
-            # speed = [2, 2]
-            # ball.y = screen.get_width() -20
-            # ball.reset_ball()
-            # print(game_state)
-            # running = False
+
         """TODO: OTHER CONDITION FOR GAME OVER HERE"""
 
 
@@ -111,6 +101,19 @@ while running:
         ball.bounce_y()
     elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
         ball.bounce_x()
+    elif ball.ball_pos.y >= screen.get_height():
+        print("out")
+        # game_state["ball"] = pygame.Vector2(ball_pos.x, ball_pos.y)
+        #save state of bricks
+        game_state["brick"] = destructible_brick.brick_list
+
+        #create new ball instance, and set position, speed of ball, and direction of ball.
+        ball = Ball(screen, "red", ball_pos, 10, dt, speed)
+        ball.ball_pos.y = rect.top - 10
+        ball.ball_pos.x = rect.left + 100
+        speed = [2, 2]
+        ball.reset_ball()
+
 
 
 
