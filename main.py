@@ -6,6 +6,7 @@ from random import Random
 from score import Score
 
 rand = Random()
+game_state = {}
 
 
 pygame.init()
@@ -58,8 +59,17 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif ball.ball_pos.y > screen.get_height():
-            running = False
+        elif ball.ball_pos.y >= screen.get_height():
+            print("out")
+            # game_state["ball"] = pygame.Vector2(ball_pos.x, ball_pos.y)
+            game_state["brick"] = destructible_brick.brick_list
+            # ball = Ball(screen, "red", ball_pos, 10, dt, speed)
+            # ball_rect = ball.draw_ball()
+            # speed = [2, 2]
+            # ball.y = screen.get_width() -20
+            # ball.reset_ball()
+            # print(game_state)
+            # running = False
         """TODO: OTHER CONDITION FOR GAME OVER HERE"""
 
 
@@ -83,7 +93,7 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RIGHT]:
         #Limits the movement of paddle, so it won't move beyond screen
-        if rect.x <= 1175:
+        if rect.x <= 1080:  #screen size minus width of paddle since x is wrp to top left of paddle
             rect.x += 300 * dt
     if keys[pygame.K_LEFT]:
         if rect.x >= 4:
@@ -98,8 +108,7 @@ while running:
 
     """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
     if ball.ball_pos.y <= 4:
-        pass
-        # ball.bounce_y()
+        ball.bounce_y()
     elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
         ball.bounce_x()
 
@@ -110,20 +119,17 @@ while running:
 
 
 
-    if (rect.y - ball.ball_pos.y) < 10 and abs(rect.x - ball.ball_pos.x)  <=90:
+
+    if rect.colliderect(ball_rect):
         ball.bounce_y()
-        print(rect)
-        print(ball.ball_pos)
-        print(f"Y: {rect.y} - {ball.ball_pos.y} = {rect.y - ball.ball_pos.y}")
-        print(f"X: {rect.x} - {ball.ball_pos.x} = {rect.x - ball.ball_pos.x}")
-    #
-    #
-    # if rect.colliderect(ball_rect):
-    #     # print(f"rect: (x, y) ({rect.x}, {rect.y})")
-    #     # print(f"ball: (x, y) ({ball_rect.x}, {ball_rect.y})")
-    #
-    #     print(f"(x) ({(ball.ball_pos.x - rect.x)})")
-    #     print(f"(y) ({rect.y - ball.ball_pos.y})")
+        #makes ball position outside the paddle so collision will only be detected once.
+        ball.ball_pos.y = rect.top - 10
+
+        # print(f"rect: (x, y) ({rect.x}, {rect.y})")
+        # print(f"ball: (x, y) ({ball_rect.x}, {ball_rect.y})")
+
+        # print(f"(x) ({(ball.ball_pos.x - rect.x)})")
+        # print(f"(y) ({rect.y - ball.ball_pos.y})")
 
 
 
