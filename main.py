@@ -6,10 +6,10 @@ from random import Random
 from score import Score
 
 
-"""TODO1 : Sound Effect"""
-"""TODO2: Add pause and pla feature"""
+# """TODO1 : Sound Effect"""
+"""TODO2: Add pause and play feature"""
 """TODO3: REFLECT SCORE COUNT SOMEWHERE ON SCREEN"""
-"""TODO4: add nice colors"""
+# """TODO4: add nice colors"""
 
 rand = Random()
 game_state = {}
@@ -30,11 +30,11 @@ ball_pos = pygame.Vector2(screen.get_width()/2, 620)
 rect = pygame.Rect((580, 700), (200, 100))
 
 #Creates the paddle instance from the Paddle class
-paddle = Paddle(screen, "blue", rect, 40)
+paddle = Paddle(screen, "#BCA88D", rect, 40)
 
 speed = [2, 2]
 #creates the ball instance from the Ball class
-ball = Ball(screen, "red", ball_pos, 10, dt, speed)
+ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
 
 
 
@@ -47,7 +47,8 @@ destructible_brick.create_rect()
 
 #sound
 pygame.mixer.init()
-bounce_sound = pygame.mixer.Sound("sounds/bounce.wav")
+brick_bounce_sound = pygame.mixer.Sound("sound/impact_brick_hit_ground_004.mp3")
+paddle_bounce_sound = pygame.mixer.Sound("sound/mixkit-basketball-ball-hard-hit-2093.wav")
 
 
 color_list = ["red", "blue", "green"]
@@ -73,7 +74,7 @@ while running:
 
     # fill the screen with a color to wipe away anything from last frame
 
-    screen.fill("purple")
+    screen.fill("#44444E")
     # RENDER YOUR GAME HERE
 
 
@@ -106,8 +107,10 @@ while running:
     """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
     if ball.ball_pos.y <= 4:
         ball.bounce_y()
+        paddle_bounce_sound.play()
     elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
         ball.bounce_x()
+        paddle_bounce_sound.play()
     elif ball.ball_pos.y >= screen.get_height():
         print("out")
         # game_state["ball"] = pygame.Vector2(ball_pos.x, ball_pos.y)
@@ -115,7 +118,7 @@ while running:
         game_state["brick"] = destructible_brick.brick_list
 
         #create new ball instance, and set position, speed of ball, and direction of ball.
-        ball = Ball(screen, "red", ball_pos, 10, dt, speed)
+        ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
         ball.ball_pos.y = rect.top - 10
         ball.ball_pos.x = rect.left + 100
         speed = [2, 2]
@@ -132,7 +135,7 @@ while running:
 
     if rect.colliderect(ball_rect):
         ball.bounce_y()
-        bounce_sound.play()
+        paddle_bounce_sound.play()
         #makes ball position outside the paddle so collision will only be detected once.
         ball.ball_pos.y = rect.top - 10
 
@@ -151,7 +154,7 @@ while running:
     #     pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
 
     for index, brick in enumerate(destructible_brick.brick_list):
-        color = ["blue", "red", "green", "#A2AF9B"]
+        color = ["#E43636", "#F6EFD2", "#E2DDB4", "#F4991A"]
         if brick == "":
             pass
         else:
@@ -183,6 +186,7 @@ while running:
             if brick.colliderect(ball_rect):
                 score.update_score(index)
                 destructible_brick.brick_list[index] = ""
+                brick_bounce_sound.play()
                 ball.bounce_y()
                 # print(score.total_score)
 
