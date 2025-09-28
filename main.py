@@ -9,10 +9,17 @@ from score import Score
 # """TODO1 : Sound Effect"""
 """TODO2: Add pause and play feature"""
 """TODO3: REFLECT SCORE COUNT SOMEWHERE ON SCREEN"""
+
+
+
+
 # """TODO4: add nice colors"""
 
 rand = Random()
 game_state = {}
+
+#
+destroyed_balls = []
 
 
 pygame.init()
@@ -52,9 +59,34 @@ paddle_bounce_sound = pygame.mixer.Sound("sound/mixkit-basketball-ball-hard-hit-
 
 
 color_list = ["red", "blue", "green"]
-
 score = Score()
 
+#initialize font for writing score.
+font = pygame.font.SysFont("Arial", 40)
+
+paused = False
+frozen_frame = None
+
+
+def next_stage():
+    global ball
+    #draw bricks
+    destructible_brick.create_rect()
+
+    #throw away ball and create new ball
+    ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
+    ball.speed_up()
+
+    #reset paddle to centre of screen
+
+#image buttons
+
+pause_img = pygame.image.load("images/pause-icon-13.png").convert_alpha()
+pause_img = pygame.transform.scale(pause_img, (64, 64))
+
+
+#button_rect
+pause_img_rect = pause_img.get_rect(center=(200, 30))
 
 """TODO2: Create Destructible bricks."""
 while running:
@@ -62,145 +94,165 @@ while running:
     # pygame.QUIT event means the user clicked X to close your window
     # print(ball.ball_pos.y)
 
-
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        #key down event for pausing the game
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                paused = True
+                if paused:
+                    frozen_frame = screen.copy()
+        #keydown event for unpausing the game.
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_o:
+                paused = False
 
         """TODO: OTHER CONDITION FOR GAME OVER HERE"""
 
 
 
     # fill the screen with a color to wipe away anything from last frame
+    if not paused:
+        screen.fill("#44444E")
+        # RENDER YOUR GAME HERE
 
-    screen.fill("#44444E")
-    # RENDER YOUR GAME HERE
+        ball_rect = ball.draw_ball()
 
-
-
-    ball_rect = ball.draw_ball()
-
-    ball.move_ball()
+        ball.move_ball()
 
 
-    paddle.create_paddle()
+        paddle.create_paddle()
 
 
-    """MOVE PADDLE WITH USER INPUT"""
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_RIGHT]:
-        #Limits the movement of paddle, so it won't move beyond screen
-        if rect.x <= 1080:  #screen size minus width of paddle since x is wrp to top left of paddle
-            rect.x += 300 * dt
-    if keys[pygame.K_LEFT]:
-        if rect.x >= 4:
-            rect.x -= 300 * dt
+        """MOVE PADDLE WITH USER INPUT"""
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            #Limits the movement of paddle, so it won't move beyond screen
+            if rect.x <= 1080:  #screen size minus width of paddle since x is wrp to top left of paddle
+                rect.x += 300 * dt
+        if keys[pygame.K_LEFT]:
+            if rect.x >= 4:
+                rect.x -= 300 * dt
 
-    #SPPED UP BALL IF CONDITIONS ARE MET
-    speed_up = destructible_brick.time_to_speedup()
-    if speed_up:
-        ball.speed_up()
+        #SPPED UP BALL IF CONDITIONS ARE MET
+        # speed_up = destructible_brick.time_to_speedup()
+        # if speed_up:
+        #     ball.speed_up()
 
 
 
-    """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
-    if ball.ball_pos.y <= 4:
-        ball.bounce_y()
-        paddle_bounce_sound.play()
-    elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
-        ball.bounce_x()
-        paddle_bounce_sound.play()
-    elif ball.ball_pos.y >= screen.get_height():
-        print("out")
-        # game_state["ball"] = pygame.Vector2(ball_pos.x, ball_pos.y)
-        #save state of bricks
-        game_state["brick"] = destructible_brick.brick_list
+        """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
+        if ball.ball_pos.y <= 4:
+            ball.bounce_y()
+            paddle_bounce_sound.play()
+        elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
+            ball.bounce_x()
+            paddle_bounce_sound.play()
+        elif ball.ball_pos.y >= screen.get_height():
+            print("out")
+            # game_state["ball"] = pygame.Vector2(ball_pos.x, ball_pos.y)
+            #save state of bricks
+            game_state["brick"] = destructible_brick.brick_list
 
-        #create new ball instance, and set position, speed of ball, and direction of ball.
-        ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
-        ball.ball_pos.y = rect.top - 10
-        ball.ball_pos.x = rect.left + 100
-        speed = [2, 2]
-        ball.reset_ball()
+            #create new ball instance, and set position, speed of ball, and direction of ball.
+            ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
+            ball.ball_pos.y = rect.top - 10
+            ball.ball_pos.x = rect.left + 100
+            # speed = [2, 2]
+            ball.reset_ball()
 
 
 
 
-    # if (ball.ball_pos.x - rect.x) == 90 and (rect.y - ball.ball_pos.y) <= 6:
-    #     ball.bounce_y()
+        # if (ball.ball_pos.x - rect.x) == 90 and (rect.y - ball.ball_pos.y) <= 6:
+        #     ball.bounce_y()
 
 
 
 
-    if rect.colliderect(ball_rect):
-        ball.bounce_y()
-        paddle_bounce_sound.play()
-        #makes ball position outside the paddle so collision will only be detected once.
-        ball.ball_pos.y = rect.top - 10
-
-        # print(f"rect: (x, y) ({rect.x}, {rect.y})")
-        # print(f"ball: (x, y) ({ball_rect.x}, {ball_rect.y})")
-
-        # print(f"(x) ({(ball.ball_pos.x - rect.x)})")
-        # print(f"(y) ({rect.y - ball.ball_pos.y})")
+        if rect.colliderect(ball_rect):
+            ball.bounce_y()
+            paddle_bounce_sound.play()
+            #makes ball position outside the paddle so collision will only be detected once.
+            ball.ball_pos.y = rect.top - 10
 
 
+        #DRAW BRICKS ON WALL AND MAKE EACH LINE DIFFERENT COLOR
 
-    #DRAW BRICKS ON WALL AND MAKE EACH LINE DIFFERENT COLOR
+        # for brick in destructible_brick.brick_list:
+        #     # color = rand.choice(color_list)
+        #     pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
 
-    # for brick in destructible_brick.brick_list:
-    #     # color = rand.choice(color_list)
-    #     pygame.draw.rect(screen, "red", brick, destructible_brick.brick_width)
+        for index, brick in enumerate(destructible_brick.brick_list):
+            color = ["#E43636", "#F4991A", "#E2DDB4", "#F6EFD2"]
+            if brick == "":
+                pass
+            else:
+                if index <= 15:
+                    s_color = color[0]
+                elif 15 < index <= 31:
+                    s_color = color[1]
+                elif 31 < index <= 47:
+                    s_color = color[2]
+                elif index > 47:
+                    s_color = color[3]
 
-    for index, brick in enumerate(destructible_brick.brick_list):
-        color = ["#E43636", "#F6EFD2", "#E2DDB4", "#F4991A"]
-        if brick == "":
-            pass
-        else:
-            if index <= 15:
-                s_color = color[0]
-            elif 15 < index <= 31:
-                s_color = color[1]
-            elif 31 < index <= 47:
-                s_color = color[2]
-            elif index > 47:
-                s_color = color[3]
-
-            pygame.draw.rect(screen, s_color, brick, destructible_brick.brick_width)
-
-
-    #CHECK FOR BALL COLLISION WITH BRICK, AND BRICK DISSAPPEAR.
-
-    # for brick in destructible_brick.brick_list:
-    #     if brick.colliderect(ball_rect):
-    #         brick_index = destructible_brick.brick_list.index(brick)
-    #         destructible_brick.brick_list.pop(brick_index)
-    #         ball.bounce_y()
-            # ball.bounce_x()
-
-    for index, brick in enumerate(destructible_brick.brick_list):
-        if brick == "":
-            pass
-        else:
-            if brick.colliderect(ball_rect):
-                score.update_score(index)
-                destructible_brick.brick_list[index] = ""
-                brick_bounce_sound.play()
-                ball.bounce_y()
-                # print(score.total_score)
+                pygame.draw.rect(screen, s_color, brick, destructible_brick.brick_width)
 
 
+        #CHECK FOR BALL COLLISION WITH BRICK, AND BRICK DISSAPPEAR.
+
+        # for brick in destructible_brick.brick_list:
+        #     if brick.colliderect(ball_rect):
+        #         brick_index = destructible_brick.brick_list.index(brick)
+        #         destructible_brick.brick_list.pop(brick_index)
+        #         ball.bounce_y()
+                # ball.bounce_x()
+
+        for index, brick in enumerate(destructible_brick.brick_list):
+            if brick == "":
+                pass
+            else:
+                if brick.colliderect(ball_rect):
+                    score.update_score(index)
+
+                    destroyed_balls.append(brick)
+                    print(len(destroyed_balls))
+                    destructible_brick.brick_list[index] = ""
+                    brick_bounce_sound.play()
+                    ball.bounce_y()
+
+                    # print(score.total_score)
+        #writes score to screen.
+        text = font.render(str(score.total_score), True, (255, 255, 255))
+        text_score_rect = text.get_rect(center=(screen.get_width() / 2, 30))
+        screen.blit(text, text_score_rect)
 
 
-    """"""
+        if len(destroyed_balls) == 64:
+            ball.ball_pos = [2000, 2000]
+            print("finished")
+            destructible_brick.brick_list.clear()
+            next_stage()
+            destroyed_balls.clear()
 
 
 
 
 
 
-    """TODO3: DEFINE LOGIC AND CONDITIONS FOR DESTRUCTION OF BRICK UPON IMPACT WITH BALL AND THEN BOUNCE"""
+        """"""
+
+
+
+
+
+
+        """TODO3: DEFINE LOGIC AND CONDITIONS FOR DESTRUCTION OF BRICK UPON IMPACT WITH BALL AND THEN BOUNCE"""
+    else:
+        screen.blit(frozen_frame, (0,0))
+
 
 
 
