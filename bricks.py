@@ -46,14 +46,4 @@ class Bricks:
 
 
 
-    # def create_bricks(self, surface, colour, ):
-    #     # x = 0
-    #     # no_bricks = self.screen_width/brick_width
-    #     # brick_width = 40
-    #
-    #     pygame.draw.rect(surface=surface, color=colour, rect=rect)
-    #
-    #     # #store in list so maybe in the future we can do brick dissapearance with list.pop()
-    #     self.brick_list.append(rect)
-    #
-    #     # return self.rect
+

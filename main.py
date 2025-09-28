@@ -7,19 +7,10 @@ from score import Score
 from image_icon import Image
 
 
-# """TODO1 : Sound Effect"""
-"""TODO2: Add pause and play feature"""
-"""TODO3: REFLECT SCORE COUNT SOMEWHERE ON SCREEN"""
-
-
-
-
-# """TODO4: add nice colors"""
-
 rand = Random()
 game_state = {}
 
-#
+#list that stores destroyed balls, so game can keep track and update stage.
 destroyed_balls = []
 
 
@@ -48,18 +39,18 @@ ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
 
 
 
-
+#initialises destructible brick object, and create rect of all destructible bricks.
 destructible_brick = Bricks(screen.get_width())
 destructible_brick.create_rect()
 
 
-#sound
+#loads sounds
 pygame.mixer.init()
 brick_bounce_sound = pygame.mixer.Sound("sound/impact_brick_hit_ground_004.mp3")
 paddle_bounce_sound = pygame.mixer.Sound("sound/mixkit-basketball-ball-hard-hit-2093.wav")
+level_complete_sound = pygame.mixer.Sound("sound/mixkit-completion-of-a-level-2063.wav")
 
-
-color_list = ["red", "blue", "green"]
+#initilaises score class
 score = Score()
 
 #initialize font for writing score.
@@ -68,7 +59,7 @@ font = pygame.font.SysFont("Arial", 40)
 paused = False
 frozen_frame = None
 
-
+#when called,
 def next_stage():
     global ball
     #draw bricks
@@ -78,22 +69,9 @@ def next_stage():
     ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
     ball.speed_up()
 
-    #reset paddle to centre of screen
+
 
 #image buttons
-
-# pause_img = pygame.image.load("images/pause-icon-13.png").convert_alpha()
-# pause_img = pygame.transform.scale(pause_img, (64, 64))
-#
-# #button_rect
-# pause_img_rect = pause_img.get_rect(center=(screen.get_width() * 0.8, 30))
-#
-# pause_hover_img = pygame.image.load("images/pause-icon-13.png").convert_alpha()
-# pause_hover_img = pygame.transform.scale(pause_hover_img, (70, 70))
-#
-# pause_hover_img_rect = pause_hover_img.get_rect(center=(screen.get_width() * 0.8, 30))
-
-
 pause_obj = Image("images/pause-icon-13.png")
 pause_list = pause_obj.create_image(64, 64)
 
@@ -101,7 +79,6 @@ pause_img = pause_list[0]
 pause_hover_img = pause_list[1]
 
 rect_list = pause_obj.create_rect(screen.get_width() * 0.8, 33)
-
 pause_img_rect = rect_list[0]
 pause_hover_img_rect = rect_list[1]
 
@@ -119,29 +96,34 @@ play_img_rect = play_rect_list[0]
 play_hover_img_rect = play_rect_list[1]
 
 
+score.read_score()
+
 
 
 """TODO2: Create Destructible bricks."""
 while running:
     # poll for events-+
     # pygame.QUIT event means the user clicked X to close your window
-    # print(ball.ball_pos.y)
+
+    #gets mouse position
     mouse_position = pygame.mouse.get_pos()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            score.write_score_to_file()
+
         #key down event for pausing the game
         if event.type == pygame.MOUSEBUTTONDOWN:
             if pause_img_rect.collidepoint(mouse_position):
                 paused = True
                 if paused:
                     frozen_frame = screen.copy()
-        #keydown event for unpausing the game.
+
+        #keydown event for un-pausing the game.
         if event.type == pygame.MOUSEBUTTONDOWN:
             if play_img_rect.collidepoint(mouse_position):
                 paused = False
-
-        """TODO: OTHER CONDITION FOR GAME OVER HERE"""
 
 
 
@@ -159,17 +141,14 @@ while running:
             screen.blit(play_hover_img, play_hover_img_rect)
         else:
             screen.blit(play_img, play_img_rect)
-        # RENDER YOUR GAME HERE
 
+        #draw ball. move ball and create paddle......
         ball_rect = ball.draw_ball()
-
         ball.move_ball()
-
-
         paddle.create_paddle()
 
 
-        """MOVE PADDLE WITH USER INPUT"""
+        #controls paddle movement when keys are pressed.
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
             #Limits the movement of paddle, so it won't move beyond screen
@@ -179,42 +158,35 @@ while running:
             if rect.x >= 4:
                 rect.x -= 300 * dt
 
-        #SPPED UP BALL IF CONDITIONS ARE MET
-        # speed_up = destructible_brick.time_to_speedup()
-        # if speed_up:
-        #     ball.speed_up()
+
+        #write best score to screen
+
+        best_score_text = font.render(f"Best score: {str(score.best_score)}", True, (0, 0, 0))
+        best_score_rect = best_score_text.get_rect(center=(screen.get_width() * 0.3, 30))
+        screen.blit(best_score_text, best_score_rect)
 
 
-
-        """TODO1: DEFINE CONDITIONS & LOGIC FOR BALL BOUNCE AGAINST PADDLE AND WALL"""
+        #defines conditions for ball to bounce against wall.
         if ball.ball_pos.y <= 4:
             ball.bounce_y()
             paddle_bounce_sound.play()
         elif ball.ball_pos.x <= 0 or ball.ball_pos.x >= screen.get_width():
             ball.bounce_x()
             paddle_bounce_sound.play()
+        #if ball goes out of bounds, the code below will happen.
         elif ball.ball_pos.y >= screen.get_height():
-            print("out")
-            # game_state["ball"] = pygame.Vector2(ball_pos.x, ball_pos.y)
-            #save state of bricks
-            game_state["brick"] = destructible_brick.brick_list
+
+            #save state of bricks, not usefull for now.
+            # game_state["brick"] = destructible_brick.brick_list
 
             #create new ball instance, and set position, speed of ball, and direction of ball.
             ball = Ball(screen, "#F1F0E4", ball_pos, 10, dt, speed)
             ball.ball_pos.y = rect.top - 10
             ball.ball_pos.x = rect.left + 100
-            # speed = [2, 2]
             ball.reset_ball()
 
 
-
-
-        # if (ball.ball_pos.x - rect.x) == 90 and (rect.y - ball.ball_pos.y) <= 6:
-        #     ball.bounce_y()
-
-
-
-
+        #sets conditions for when ball comes in contact with paddle.
         if rect.colliderect(ball_rect):
             ball.bounce_y()
             paddle_bounce_sound.play()
@@ -268,31 +240,21 @@ while running:
                     ball.bounce_y()
 
                     # print(score.total_score)
+
         #writes score to screen.
-        text = font.render(str(score.total_score), True, (255, 255, 255))
+        text = font.render(f"Score: {str(score.total_score)}", True, (0, 0, 0))
         text_score_rect = text.get_rect(center=(screen.get_width() / 2, 30))
         screen.blit(text, text_score_rect)
 
 
-
+        #sets condition for game to go to next level.
         if len(destroyed_balls) == 64:
             ball.ball_pos = [2000, 2000]
-            print("finished")
+            # print("finished")
+            level_complete_sound.play()
             destructible_brick.brick_list.clear()
             next_stage()
             destroyed_balls.clear()
-
-
-
-
-
-
-        """"""
-
-
-
-
-
 
 
     else:
@@ -305,7 +267,6 @@ while running:
 
     # flip() the display to put your work on screen
     pygame.display.flip()
-
     dt = clock.tick(60)/1000  # limits FPS to 60
 
 pygame.quit()

@@ -3,6 +3,7 @@ class Score:
 
     def __init__(self):
         self.total_score = 0
+        self.best_score = 0
 
 
     #assigns different scores to different rows of blocks.
@@ -20,7 +21,17 @@ class Score:
         self.total_score += score
 
     def write_score_to_file(self):
-        pass
+        score_to_write = self.total_score
+        with open("files/score_saver", mode="w") as file:
+            file.write(f"score, {str(score_to_write)}")
+
+    def read_score(self):
+        with open("files/score_saver", mode="r") as file:
+            read = file.readline()
+            l = read.split(",")
+            best_score = l[1].strip()
+
+            self.best_score = best_score
 
 
 
