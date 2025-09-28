@@ -4,6 +4,7 @@ from paddle import Paddle
 from bricks import Bricks
 from random import Random
 from score import Score
+from image_icon import Image
 
 
 # """TODO1 : Sound Effect"""
@@ -81,31 +82,63 @@ def next_stage():
 
 #image buttons
 
-pause_img = pygame.image.load("images/pause-icon-13.png").convert_alpha()
-pause_img = pygame.transform.scale(pause_img, (64, 64))
+# pause_img = pygame.image.load("images/pause-icon-13.png").convert_alpha()
+# pause_img = pygame.transform.scale(pause_img, (64, 64))
+#
+# #button_rect
+# pause_img_rect = pause_img.get_rect(center=(screen.get_width() * 0.8, 30))
+#
+# pause_hover_img = pygame.image.load("images/pause-icon-13.png").convert_alpha()
+# pause_hover_img = pygame.transform.scale(pause_hover_img, (70, 70))
+#
+# pause_hover_img_rect = pause_hover_img.get_rect(center=(screen.get_width() * 0.8, 30))
 
 
-#button_rect
-pause_img_rect = pause_img.get_rect(center=(200, 30))
+pause_obj = Image("images/pause-icon-13.png")
+pause_list = pause_obj.create_image(64, 64)
+
+pause_img = pause_list[0]
+pause_hover_img = pause_list[1]
+
+rect_list = pause_obj.create_rect(screen.get_width() * 0.8, 33)
+
+pause_img_rect = rect_list[0]
+pause_hover_img_rect = rect_list[1]
+
+
+
+play_obj = Image("images/play-icon-2.png")
+play_list = play_obj.create_image(44, 44)
+
+play_img = play_list[0]
+play_hover_img = play_list[1]
+
+play_rect_list = play_obj.create_rect(screen.get_width() * 0.9, 33)
+
+play_img_rect = play_rect_list[0]
+play_hover_img_rect = play_rect_list[1]
+
+
+
 
 """TODO2: Create Destructible bricks."""
 while running:
     # poll for events-+
     # pygame.QUIT event means the user clicked X to close your window
     # print(ball.ball_pos.y)
-
+    mouse_position = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         #key down event for pausing the game
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if pause_img_rect.collidepoint(mouse_position):
                 paused = True
                 if paused:
                     frozen_frame = screen.copy()
         #keydown event for unpausing the game.
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_o:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if play_img_rect.collidepoint(mouse_position):
                 paused = False
 
         """TODO: OTHER CONDITION FOR GAME OVER HERE"""
@@ -115,6 +148,17 @@ while running:
     # fill the screen with a color to wipe away anything from last frame
     if not paused:
         screen.fill("#44444E")
+
+        #hover effect for button logic
+        if pause_img_rect.collidepoint(mouse_position):
+            screen.blit(pause_hover_img, pause_hover_img_rect)
+        else:
+            screen.blit(pause_img, pause_img_rect)
+
+        if play_img_rect.collidepoint(mouse_position):
+            screen.blit(play_hover_img, play_hover_img_rect)
+        else:
+            screen.blit(play_img, play_img_rect)
         # RENDER YOUR GAME HERE
 
         ball_rect = ball.draw_ball()
@@ -230,6 +274,7 @@ while running:
         screen.blit(text, text_score_rect)
 
 
+
         if len(destroyed_balls) == 64:
             ball.ball_pos = [2000, 2000]
             print("finished")
@@ -249,8 +294,9 @@ while running:
 
 
 
-        """TODO3: DEFINE LOGIC AND CONDITIONS FOR DESTRUCTION OF BRICK UPON IMPACT WITH BALL AND THEN BOUNCE"""
+
     else:
+        #renders when game is paused
         screen.blit(frozen_frame, (0,0))
 
 
